@@ -1,0 +1,30 @@
+1. go mod init github.com/brijesh025/student-api --> use to create a go project
+
+2. we are gonna use sqlite database for this project, so we need to install the sqlite driver for go, we can use the following command to install it:
+   ->go get github.com/mattn/go-sqlite3
+
+3. we are gonna user golang's clean env for environment variables, so we need to install the godotenv package, we can use the following command to install it:
+   ->clean ev is a tool that helps you manage your environment variables in a clean and organized way. It allows you to create a .env file where you can store your environment 
+   variables, and it will automatically load them into your application when you run it. This is especially useful for managing sensitive information like database credentials, 
+   API keys, etc.
+   ->go get github.com/joho/godotenv
+   
+
+
+
+
+
+--------------------------Command to run the project--------------------------
+1. to run the code: go run main.go
+
+2. to build the code: go build main.go
+
+3. to run the built code: ./main
+
+4. to intialise pacakge:go mod init github.com/brijesh025/poscast
+
+5. to download pacakge: go get "link to package"
+
+6. to get automatic dependencies and fix indirect dependencies: go mod tidy
+
+7. to run test cases: go test -v
