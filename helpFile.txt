@@ -9,7 +9,14 @@
    API keys, etc.
    ->go get github.com/joho/godotenv
    
-
+4. e := godotenv.Load(); 
+   if e != nil {
+       log.Fatal("Error loading .env file")
+   }
+   -> this code is used to load the environment variables from the .env file. It will look for the .env file in the root directory of your project and load the variables 
+   defined in it into your application. If there is an error loading the file, it will log a fatal error message.
+   -> then we can use the os package to access the environment variables in our code, for example:
+   -> configPath := os.Getenv("CONFIG_PATH")
 
 
 
