@@ -35,3 +35,11 @@
 6. to get automatic dependencies and fix indirect dependencies: go mod tidy
 
 7. to run test cases: go test -v
+
+
+----------------------------main.go-------------------------------------------
+1. channel vs waitgroup use:
+   -> channels are used for communication between goroutines, they allow you to send and receive values between goroutines. They are useful for synchronizing the execution of 
+   goroutines and for sharing data between them.
+   -> waitgroups are used to wait for a collection of goroutines to finish executing. They allow you to specify a number of goroutines that you want to wait for, and then 
+   block until all of those goroutines have finished executing. They are useful for ensuring that all goroutines have completed their work before the main goroutine exits.
