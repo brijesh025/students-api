@@ -11,8 +11,9 @@ import (
 	"github.com/brijesh025/students-api/internal/utils/response"
 )
 
-func Welcome() http.HandlerFunc {
+func Create() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		slog.Info("Creating a Student")
 		var student types.Student
 		err := json.NewDecoder(r.Body).Decode(&student)
 		// if err!=nil {
@@ -22,7 +23,12 @@ func Welcome() http.HandlerFunc {
 			response.WriteJson(w, http.StatusBadRequest, response.GeneralError(err))
 			return
 		}
-		slog.Info("Creating a Student")
-		response.WriteJson(w, http.StatusCreated, map[string] string {"sucsess": "OK"})
+		if(err != nil){
+			response.WriteJson(w, http.StatusBadRequest, response.GeneralError(err))
+			return
+		}
+		// ------------------> we should always validate our request made by user at our end
+		
+		response.WriteJson(w, http.StatusCreated, map[string] interface{} {"sucsess": "OK", "student": student})
 	}
 }

@@ -5,8 +5,8 @@ import (
 	"net/http"
 )
 type Response struct {
-	Status string
-	Error string
+	Status string `json:"status"`
+	Error string `json:"error"`
 }
 const  (
 	StatusOK = "OK"

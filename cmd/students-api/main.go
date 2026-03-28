@@ -26,7 +26,7 @@ func main(){
 	//2. database setup
 	//3. setup router
 	router := http.NewServeMux()
-	router.HandleFunc("POST /students/api", students.Welcome())
+	router.HandleFunc("POST /students/api/create", students.Create())
 	//4. setup server
 	server := http.Server{
 		Addr: cfg.HTTPServer.Address,
@@ -37,10 +37,9 @@ func main(){
 	// wg.Add(1);
 	done := make(chan os.Signal, 1)
 	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM);
-	var err error
 	go func(/*wg *sync.WaitGroup*/){
 		// defer wg.Done()
-		err = server.ListenAndServe()
+		err := server.ListenAndServe()
 		if (err != nil) {
 			log.Fatal("Failed to start server")
 		}
