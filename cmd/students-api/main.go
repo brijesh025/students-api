@@ -13,6 +13,7 @@ import (
 
 	// "sync"
 	"github.com/brijesh025/students-api/internal/config"
+	students "github.com/brijesh025/students-api/internal/http/handlers/student"
 	"github.com/joho/godotenv"
 )
 func main(){
@@ -25,9 +26,7 @@ func main(){
 	//2. database setup
 	//3. setup router
 	router := http.NewServeMux()
-	router.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Welcome to students api"))
-	})
+	router.HandleFunc("POST /students/api", students.Welcome())
 	//4. setup server
 	server := http.Server{
 		Addr: cfg.HTTPServer.Address,
@@ -47,7 +46,7 @@ func main(){
 		}
 	}(/*&wg*/)
 	// wg.Wait()
-	// <-done
+	<-done
 	slog.Info("\nshutting down the server")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()

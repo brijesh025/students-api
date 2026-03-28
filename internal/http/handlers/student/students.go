@@ -1,0 +1,28 @@
+package students
+
+import (
+	"encoding/json"
+	"errors"
+	"io"
+	"log/slog"
+	"net/http"
+
+	"github.com/brijesh025/students-api/internal/types"
+	"github.com/brijesh025/students-api/internal/utils/response"
+)
+
+func Welcome() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var student types.Student
+		err := json.NewDecoder(r.Body).Decode(&student)
+		// if err!=nil {
+		// 	slog.Error("decoding failed")
+		// }
+		if errors.Is(err, io.EOF){
+			response.WriteJson(w, http.StatusBadRequest, response.GeneralError(err))
+			return
+		}
+		slog.Info("Creating a Student")
+		response.WriteJson(w, http.StatusCreated, map[string] string {"sucsess": "OK"})
+	}
+}
