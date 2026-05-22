@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	// "fmt"
 	"log"
 	"log/slog"
 	"net/http"
@@ -11,49 +10,60 @@ import (
 	"syscall"
 	"time"
 
-	// "sync"
 	"github.com/brijesh025/students-api/internal/config"
-	students "github.com/brijesh025/students-api/internal/http/handlers/student"
-	"github.com/joho/godotenv"
+	"github.com/brijesh025/students-api/internal/http/handlers/student"
+	"github.com/brijesh025/students-api/internal/storage/sqlite"
 )
-func main(){
-	//1. load config
-	e := godotenv.Load();
-	if(e!=nil){
-		log.Println(".env file was not loaded")
+
+func main() {
+	// load config
+	cfg := config.MustLoad()
+	// database setup
+
+	storage, err := sqlite.New(cfg)
+	if err != nil {
+		log.Fatal(err)
 	}
-	cfg := config.MustLoad();
-	//2. database setup
-	//3. setup router
+
+	slog.Info("storage initialized", slog.String("env", cfg.Env), slog.String("version", "1.0.0"))
+
+	// setup router
 	router := http.NewServeMux()
-	router.HandleFunc("POST /students/api/create", students.Create())
-	//4. setup server
+
+	router.HandleFunc("POST /api/students", student.New(storage))
+	router.HandleFunc("GET /api/students/{id}", student.GetById(storage))
+	router.HandleFunc("GET /api/students", student.GetList(storage))
+	// setup server
+
 	server := http.Server{
-		Addr: cfg.HTTPServer.Address,
+		Addr:    cfg.HTTPServer.Address,
 		Handler: router,
 	}
-	slog.Info("Server started and Ready to work!! Check", slog.String("Adress",cfg.HTTPServer.Address) )
-	// var wg sync.WaitGroup
-	// wg.Add(1);
+
+	slog.Info("server started", slog.String("address", cfg.HTTPServer.Address))
+
 	done := make(chan os.Signal, 1)
-	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM);
-	go func(/*wg *sync.WaitGroup*/){
-		// defer wg.Done()
+
+	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+
+	go func() {
 		err := server.ListenAndServe()
-		if (err != nil) {
-			log.Fatal("Failed to start server")
+		if err != nil {
+			log.Fatal("failed to start server")
 		}
-	}(/*&wg*/)
-	// wg.Wait()
+	}()
+
 	<-done
-	slog.Info("\nshutting down the server")
+
+	slog.Info("shutting down the server")
+
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	if err := server.Shutdown(ctx); err!=nil{
-		slog.Error("Failed to shutdown the server", slog.String("error", err.Error()))
+	if err := server.Shutdown(ctx); err != nil {
+		slog.Error("failed to shutdown server", slog.String("error", err.Error()))
 	}
 
-	slog.Info("Server shutdown successfully")
-	
+	slog.Info("server shutdown successfully")
+
 }
